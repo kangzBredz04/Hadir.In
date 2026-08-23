@@ -1,22 +1,31 @@
 require('dotenv').config();
 
+const commonConfig = {
+    url: process.env.DATABASE_URL,
+    dialect: 'postgres',
+
+    migrationStorage: 'sequelize',
+    migrationStorageTableName: 'SequelizeMeta',
+
+    seederStorage: 'sequelize',
+    seederStorageTableName: 'SequelizeData'
+};
+
 module.exports = {
     development: {
-        url: process.env.DATABASE_URL,
-        dialect: 'postgres',
+        ...commonConfig,
         logging: console.log
     },
 
     test: {
-        url: process.env.DATABASE_URL,
-        dialect: 'postgres',
+        ...commonConfig,
         logging: false
     },
 
     production: {
-        url: process.env.DATABASE_URL,
-        dialect: 'postgres',
+        ...commonConfig,
         logging: false,
+
         dialectOptions: {
             ssl: {
                 require: true,

@@ -4,6 +4,7 @@ import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 
 import routes from './routes/index.routes.js';
+
 import {
     notFoundHandler,
     errorHandler
@@ -35,24 +36,48 @@ app.use(
     })
 );
 
-const apiLimiter = rateLimit({
-    windowMs: 15 * 60 * 1000,
-    limit: 100,
-    standardHeaders: 'draft-8',
-    legacyHeaders: false,
-    message: {
-        success: false,
-        message: 'Terlalu banyak request. Silakan coba lagi nanti.',
-        errors: []
-    }
-});
+const apiLimiter =
+    rateLimit({
+        windowMs:
+            15 * 60 * 1000,
 
-app.use('/api', apiLimiter);
+        limit:
+            100,
 
-app.use('/api', routes);
+        standardHeaders:
+            'draft-8',
 
-app.use(notFoundHandler);
+        legacyHeaders:
+            false,
 
-app.use(errorHandler);
+        message: {
+            success:
+                false,
+
+            message:
+                'Terlalu banyak request. Silakan coba lagi nanti.',
+
+            errors:
+                []
+        }
+    });
+
+app.use(
+    '/api',
+    apiLimiter
+);
+
+app.use(
+    '/api',
+    routes
+);
+
+app.use(
+    notFoundHandler
+);
+
+app.use(
+    errorHandler
+);
 
 export default app;
