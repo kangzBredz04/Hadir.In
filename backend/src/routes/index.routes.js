@@ -6,6 +6,7 @@ import authRoutes from './auth.routes.js';
 import userRoutes from './user.routes.js';
 import adminRoutes from './admin.routes.js';
 import attendanceRoutes from './attendance.routes.js';
+import { apiLimiter } from '../middlewares/rate-limit.middleware.js';
 
 const router = Router();
 
@@ -34,22 +35,26 @@ router.get(
 
 router.use(
     '/auth',
-    authRoutes
+    authRoutes,
+    apiLimiter
 );
 
 router.use(
     '/users',
-    userRoutes
+    userRoutes,
+    apiLimiter
 );
 
 router.use(
     '/attendance',
-    attendanceRoutes
+    attendanceRoutes,
+    apiLimiter
 );
 
 router.use(
     '/admin',
-    adminRoutes
+    adminRoutes,
+    apiLimiter
 );
 
 export default router;

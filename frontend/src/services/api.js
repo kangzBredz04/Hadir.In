@@ -57,6 +57,7 @@ export async function apiRequest(endpoint, options = {}) {
 
     throw error;
   }
+  console.log(payload);
 
   return payload;
 }

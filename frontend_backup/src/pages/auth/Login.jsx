@@ -40,6 +40,7 @@ export default function Login() {
       if (err instanceof ApiError && err.status === 401) {
         setError('Email atau password salah.')
       } else {
+        console.log(err)
         setError(handleApiError(err))
       }
     } finally {

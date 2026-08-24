@@ -5,13 +5,18 @@ function normalizeRole(role) {
 }
 
 function normalizeUser(user) {
-  if (!user) return null;
-
   return {
-    ...user,
-    role: normalizeRole(user.role),
+    id: user?.id ?? null,
+    employeeId: user?.employeeId ?? user?.employee_id ?? null,
+    name: user?.name ?? '',
+    email: user?.email ?? '',
+    role: String(user?.role ?? '').toUpperCase(),
+    office: user?.office ?? null,
+    isActive: user?.isActive ?? user?.is_active ?? true,
   };
 }
+
+let currentUserRequest = null;
 
 function getResponseData(payload) {
   return payload?.data ?? payload ?? {};
@@ -32,7 +37,23 @@ export async function login(credentials) {
 }
 
 export async function getCurrentUser() {
-  const payload = await apiRequest('/auth/me');
-  const data = getResponseData(payload);
-  return normalizeUser(data.user ?? data.profile ?? data);
+  if (currentUserRequest) {
+    return currentUserRequest;
+  }
+
+  currentUserRequest = apiRequest('/users/me')
+    .then((payload) => {
+      const data = getResponseData(payload);
+
+      return normalizeUser(
+        data.user ??
+        data.profile ??
+        data,
+      );
+    })
+    .finally(() => {
+      currentUserRequest = null;
+    });
+
+  return currentUserRequest;
 }
