@@ -4,7 +4,7 @@ import Brand from '../components/layout/Brand.jsx';
 
 export default function NotFound() {
   return (
-    <main className="grid min-h-screen place-items-center bg-background px-4 text-center">
+    <main id="main-content" tabIndex="-1" className="grid min-h-screen place-items-center bg-background px-4 text-center outline-none">
       <div>
         <Brand />
         <p className="mt-10 text-sm font-semibold text-primary">404</p>

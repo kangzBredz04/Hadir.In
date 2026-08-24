@@ -1,9 +1,10 @@
-import { CheckCircle2, Clock3, XCircle } from 'lucide-react';
+import { CheckCircle2, CircleMinus, Clock3, XCircle } from 'lucide-react';
 
 const variants = {
   success: { className: 'bg-success-light text-success', Icon: CheckCircle2 },
   warning: { className: 'bg-warning-light text-warning', Icon: Clock3 },
   danger: { className: 'bg-danger-light text-danger', Icon: XCircle },
+  neutral: { className: 'bg-slate-100 text-ink-muted', Icon: CircleMinus },
 };
 
 export default function Badge({ children, variant = 'success' }) {

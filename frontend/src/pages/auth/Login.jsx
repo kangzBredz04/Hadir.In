@@ -14,6 +14,7 @@ import Brand from '../../components/layout/Brand.jsx';
 import Button from '../../components/ui/Button.jsx';
 import Input from '../../components/ui/Input.jsx';
 import Spinner from '../../components/ui/Spinner.jsx';
+import { useToast } from '../../components/ui/Toast.jsx';
 import useAuth from '../../hooks/useAuth.js';
 import { handleLoginError } from '../../utils/errorHandler.js';
 
@@ -31,6 +32,7 @@ export default function Login() {
   const navigate = useNavigate();
   const location = useLocation();
   const { login } = useAuth();
+  const { showToast } = useToast();
   const [form, setForm] = useState({ email: '', password: '' });
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -64,6 +66,7 @@ export default function Login() {
         ? intendedPath
         : getDashboardPath(user.role);
 
+      showToast(`Login berhasil. Selamat datang, ${user.name ?? 'pengguna'}.`);
       navigate(destination, { replace: true });
     } catch (requestError) {
       setError(handleLoginError(requestError));
@@ -73,7 +76,7 @@ export default function Login() {
   }
 
   return (
-    <main className="min-h-screen bg-background lg:grid lg:grid-cols-[1.05fr_.95fr]">
+    <main id="main-content" tabIndex="-1" className="min-h-screen bg-background outline-none lg:grid lg:grid-cols-[1.05fr_.95fr]">
       <section className="relative hidden overflow-hidden bg-gradient-to-br from-primary-dark via-primary to-[#0B83C4] p-10 text-white lg:flex lg:flex-col lg:justify-between xl:p-14">
         <div className="absolute -right-24 -top-24 size-80 rounded-full border-[42px] border-white/5" />
         <div className="absolute -bottom-32 -left-20 size-96 rounded-full border-[54px] border-white/5" />
