@@ -6,14 +6,21 @@ import {
 
 import Login from '../pages/auth/Login';
 
-import EmployeeDashboard from '../pages/employee/Dashboard';
 import AdminDashboard from '../pages/admin/Dashboard';
+
+import EmployeeDashboard from '../pages/employee/Dashboard';
+import EmployeeAttendance from '../pages/employee/Attendance';
+import EmployeeHistory from '../pages/employee/History';
+import EmployeeProfile from '../pages/employee/Profile';
+
+import EmployeeLayout from '../layouts/EmployeeLayout';
 
 import ProtectedRoute from './ProtectedRoute';
 import RoleRoute from './RoleRoute';
 
 import {
     AUTH_ROUTES,
+    EMPLOYEE_ROUTES,
     ROLES
 } from '../constants/auth';
 
@@ -57,13 +64,50 @@ export default function AppRoutes() {
                 >
                     <Route
                         path={
-                            AUTH_ROUTES
-                                .EMPLOYEE_HOME
+                            EMPLOYEE_ROUTES.ROOT
                         }
                         element={
-                            <EmployeeDashboard />
+                            <EmployeeLayout />
                         }
-                    />
+                    >
+                        <Route
+                            index
+                            element={
+                                <Navigate
+                                    to="dashboard"
+                                    replace
+                                />
+                            }
+                        />
+
+                        <Route
+                            path="dashboard"
+                            element={
+                                <EmployeeDashboard />
+                            }
+                        />
+
+                        <Route
+                            path="attendance"
+                            element={
+                                <EmployeeAttendance />
+                            }
+                        />
+
+                        <Route
+                            path="history"
+                            element={
+                                <EmployeeHistory />
+                            }
+                        />
+
+                        <Route
+                            path="profile"
+                            element={
+                                <EmployeeProfile />
+                            }
+                        />
+                    </Route>
                 </Route>
 
                 <Route
@@ -77,8 +121,7 @@ export default function AppRoutes() {
                 >
                     <Route
                         path={
-                            AUTH_ROUTES
-                                .ADMIN_HOME
+                            AUTH_ROUTES.ADMIN_HOME
                         }
                         element={
                             <AdminDashboard />
