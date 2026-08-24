@@ -10,15 +10,24 @@ import {
   BrowserRouter
 } from 'react-router-dom';
 
-import App from './App.jsx';
+import {
+  AuthProvider
+} from './contexts/AuthContext';
+
+import App from './App';
+
 import './index.css';
 
 createRoot(
-  document.getElementById('root')
+  document.getElementById(
+    'root'
+  )
 ).render(
   <StrictMode>
     <BrowserRouter>
-      <App />
+      <AuthProvider>
+        <App />
+      </AuthProvider>
     </BrowserRouter>
   </StrictMode>
 );
