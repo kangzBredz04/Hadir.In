@@ -1,14 +1,33 @@
-export default function Spinner({ size = 'md', className = '' }) {
-  const sizes = {
-    sm: 'size-4 border-2',
-    md: 'size-6 border-[3px]',
-    lg: 'size-9 border-4',
-  };
+import {
+    LoaderCircle
+} from 'lucide-react';
 
-  return (
-    <span
-      aria-hidden="true"
-      className={`inline-block animate-spin rounded-full border-current border-r-transparent ${sizes[size]} ${className}`}
-    />
-  );
+export default function Spinner({
+    size = 24,
+    label = 'Memuat...'
+}) {
+    return (
+        <div
+            className="
+        inline-flex
+        items-center
+        gap-2
+        text-muted
+      "
+            role="status"
+            aria-live="polite"
+        >
+            <LoaderCircle
+                size={size}
+                className="animate-spin"
+                aria-hidden="true"
+            />
+
+            {label && (
+                <span className="text-sm">
+                    {label}
+                </span>
+            )}
+        </div>
+    );
 }

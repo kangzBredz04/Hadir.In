@@ -1,19 +1,78 @@
-import { CheckCircle2, CircleMinus, Clock3, XCircle } from 'lucide-react';
+import {
+    CheckCircle2,
+    CircleAlert,
+    CircleX
+} from 'lucide-react';
 
 const variants = {
-  success: { className: 'bg-success-light text-success', Icon: CheckCircle2 },
-  warning: { className: 'bg-warning-light text-warning', Icon: Clock3 },
-  danger: { className: 'bg-danger-light text-danger', Icon: XCircle },
-  neutral: { className: 'bg-slate-100 text-ink-muted', Icon: CircleMinus },
+    success: {
+        className:
+            'bg-green-50 text-success border-green-200',
+
+        Icon:
+            CheckCircle2
+    },
+
+    warning: {
+        className:
+            'bg-orange-50 text-warning border-orange-200',
+
+        Icon:
+            CircleAlert
+    },
+
+    danger: {
+        className:
+            'bg-red-50 text-danger border-red-200',
+
+        Icon:
+            CircleX
+    },
+
+    neutral: {
+        className:
+            'bg-background text-muted border-border',
+
+        Icon:
+            null
+    }
 };
 
-export default function Badge({ children, variant = 'success' }) {
-  const { className, Icon } = variants[variant];
+export default function Badge({
+    children,
+    variant = 'neutral',
+    showIcon = true
+}) {
+    const config =
+        variants[variant] ??
+        variants.neutral;
 
-  return (
-    <span className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold ${className}`}>
-      <Icon aria-hidden="true" size={15} strokeWidth={2.25} />
-      {children}
-    </span>
-  );
+    const Icon =
+        config.Icon;
+
+    return (
+        <span
+            className={`
+        inline-flex
+        items-center
+        gap-1.5
+        rounded-full
+        border
+        px-2.5
+        py-1
+        text-xs
+        font-semibold
+        ${config.className}
+      `}
+        >
+            {showIcon && Icon && (
+                <Icon
+                    size={14}
+                    aria-hidden="true"
+                />
+            )}
+
+            {children}
+        </span>
+    );
 }

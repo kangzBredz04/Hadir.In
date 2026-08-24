@@ -1,7 +1,20 @@
-export default function Card({ children, className = '' }) {
-  return (
-    <section className={`rounded-card border border-border bg-surface shadow-card ${className}`}>
-      {children}
-    </section>
-  );
+export default function Card({
+    children,
+    className = ''
+}) {
+    return (
+        <div
+            className={`
+        rounded-2xl
+        border
+        border-border
+        bg-surface
+        p-5
+        shadow-sm
+        ${className}
+      `}
+        >
+            {children}
+        </div>
+    );
 }
