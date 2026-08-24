@@ -1,16 +1,51 @@
-# React + Vite
+# Hadir.In Frontend — Tahap 2
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+Fondasi frontend sistem absensi karyawan menggunakan React, Vite, JavaScript, Tailwind CSS, React Router DOM, Lucide React, React Webcam, dan pnpm.
 
-Currently, two official plugins are available:
+## Menjalankan proyek
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+```bash
+cp .env.example .env
+pnpm install
+pnpm dev
+```
 
-## React Compiler
+Buka alamat yang ditampilkan Vite. Backend default dikonfigurasi pada `VITE_API_URL=http://localhost:3000/api`.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Validasi
 
-## Expanding the Oxlint configuration
+```bash
+pnpm lint
+pnpm build
+pnpm preview
+```
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
+## API authentication
+
+Frontend menggunakan endpoint berikut:
+
+```text
+POST /api/auth/login
+GET  /api/auth/me
+```
+
+Format response login yang direkomendasikan:
+
+```json
+{
+  "success": true,
+  "data": {
+    "token": "jwt-token",
+    "user": {
+      "id": "user-id",
+      "name": "Wahyu",
+      "email": "wahyu@example.com",
+      "role": "EMPLOYEE"
+    }
+  }
+}
+```
+
+Tahap 2 mencakup halaman login, show/hide password, loading dan error state, `AuthContext`, `useAuth`, token handling, pemulihan sesi melalui backend, `ProtectedRoute`, `RoleRoute`, redirect berdasarkan role, logout, dan penanganan otomatis response `401`.
+
+Token JWT disimpan di `sessionStorage`, sedangkan user dan role selalu diverifikasi kembali melalui backend. Dashboard pada tahap ini masih berupa halaman verifikasi authentication dan akan diganti pada Tahap 3.

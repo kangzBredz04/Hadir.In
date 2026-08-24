@@ -2,8 +2,11 @@ import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
+import swaggerUi from 'swagger-ui-express';
 
 import routes from './routes/index.routes.js';
+
+import openApiSpec from './docs/openapi.js';
 
 import {
     notFoundHandler,
@@ -36,6 +39,46 @@ app.use(
     })
 );
 
+/*
+ * ==============================
+ * API DOCUMENTATION
+ * ==============================
+ */
+
+app.get(
+    '/openapi.json',
+    (req, res) => {
+        return res.json(
+            openApiSpec
+        );
+    }
+);
+
+app.use(
+    '/api-docs',
+
+    swaggerUi.serve,
+
+    swaggerUi.setup(
+        openApiSpec,
+        {
+            customSiteTitle:
+                'Hadir.In API Documentation',
+
+            swaggerOptions: {
+                persistAuthorization:
+                    true
+            }
+        }
+    )
+);
+
+/*
+ * ==============================
+ * RATE LIMIT
+ * ==============================
+ */
+
 const apiLimiter =
     rateLimit({
         windowMs:
@@ -57,8 +100,7 @@ const apiLimiter =
             message:
                 'Terlalu banyak request. Silakan coba lagi nanti.',
 
-            errors:
-                []
+            errors: []
         }
     });
 
@@ -66,6 +108,12 @@ app.use(
     '/api',
     apiLimiter
 );
+
+/*
+ * ==============================
+ * API ROUTES
+ * ==============================
+ */
 
 app.use(
     '/api',

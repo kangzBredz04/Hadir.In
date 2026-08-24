@@ -11,19 +11,10 @@ import {
 } from '../middlewares/role.middleware.js';
 
 import {
-    validateAttendanceLocation
-} from '../middlewares/validation.middleware.js';
-
-import {
     uploadAttendancePhoto,
     validateAttendancePhoto
 } from '../middlewares/upload.middleware.js';
 
-import {
-    checkIn,
-    checkOut,
-    getTodayAttendance
-} from '../controllers/attendance.controller.js';
 
 import {
     validateAttendanceLocation,

@@ -1,47 +1,37 @@
-import { Navigate, Route, Routes } from 'react-router-dom'
-import { useAuth } from '../hooks/useAuth'
-import { ProtectedRoute } from './ProtectedRoute'
-import { RoleRoute } from './RoleRoute'
-import Login from '../pages/auth/Login'
-import EmployeeDashboard from '../pages/employee/Dashboard'
-import AdminDashboard from '../pages/admin/Dashboard'
+import { Route, Routes } from 'react-router-dom';
+import Login from '../pages/auth/Login.jsx';
+import AuthenticatedPlaceholder from '../pages/AuthenticatedPlaceholder.jsx';
+import NotFound from '../pages/NotFound.jsx';
+import ProtectedRoute from './ProtectedRoute.jsx';
+import PublicRoute from './PublicRoute.jsx';
+import RoleRoute from './RoleRoute.jsx';
+import RootRedirect from './RootRedirect.jsx';
 
-export function AppRoutes() {
+export default function AppRoutes() {
   return (
     <Routes>
-      <Route path="/login" element={<Login />} />
+      <Route path="/" element={<RootRedirect />} />
+      <Route element={<PublicRoute />}>
+        <Route path="/login" element={<Login />} />
+      </Route>
 
       <Route element={<ProtectedRoute />}>
         <Route element={<RoleRoute role="EMPLOYEE" />}>
-          <Route path="/employee/dashboard" element={<EmployeeDashboard />} />
+          <Route
+            path="/employee/dashboard"
+            element={<AuthenticatedPlaceholder role="EMPLOYEE" />}
+          />
         </Route>
 
         <Route element={<RoleRoute role="ADMIN" />}>
-          <Route path="/admin/dashboard" element={<AdminDashboard />} />
+          <Route
+            path="/admin/dashboard"
+            element={<AuthenticatedPlaceholder role="ADMIN" />}
+          />
         </Route>
       </Route>
 
-      <Route path="/" element={<RootRedirect />} />
-      <Route path="*" element={<RootRedirect />} />
+      <Route path="*" element={<NotFound />} />
     </Routes>
-  )
-}
-
-/**
- * Arahkan "/" atau URL yang tidak dikenal ke tujuan yang tepat berdasarkan
- * status login & role — bukan halaman 404 statis, karena di aplikasi ini
- * setiap user selalu punya "home" yang jelas.
- */
-function RootRedirect() {
-  const { isAuthenticated, isInitializing, user } = useAuth()
-
-  if (isInitializing) return null
-
-  if (!isAuthenticated) {
-    return <Navigate to="/login" replace />
-  }
-
-  return (
-    <Navigate to={user.role === 'ADMIN' ? '/admin/dashboard' : '/employee/dashboard'} replace />
-  )
+  );
 }

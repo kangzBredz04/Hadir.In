@@ -1,90 +1,104 @@
-import { createContext, useCallback, useEffect, useMemo, useState } from 'react'
-import { authService } from '../services/auth.service'
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import * as authService from '../services/auth.service.js';
+import {
+  AUTH_UNAUTHORIZED_EVENT,
+  tokenStorage,
+} from '../utils/tokenStorage.js';
+import { AuthContext } from './authContext.js';
 
-export const AuthContext = createContext(null)
+const ALLOWED_ROLES = ['ADMIN', 'EMPLOYEE'];
 
-/**
- * Menyimpan status login di memori React + token JWT di localStorage.
- *
- * Catatan keamanan: `user.role` yang tersimpan di sini HANYA dipakai untuk
- * kebutuhan UX (menampilkan menu, redirect awal). Ini bukan sumber otorisasi
- * yang sebenarnya — setiap endpoint tetap memvalidasi role di backend
- * berdasarkan token, bukan berdasarkan apa yang dikirim/disimpan frontend.
- */
-export function AuthProvider({ children }) {
-  const [user, setUser] = useState(null)
-  const [token, setToken] = useState(null)
-  const [isInitializing, setIsInitializing] = useState(true)
+function hasValidRole(user) {
+  return ALLOWED_ROLES.includes(user?.role);
+}
+
+export default function AuthProvider({ children }) {
+  const [user, setUser] = useState(null);
+  const [isInitializing, setIsInitializing] = useState(true);
 
   const clearSession = useCallback(() => {
-    authService.clearToken()
-    setUser(null)
-    setToken(null)
-  }, [])
+    tokenStorage.remove();
+    setUser(null);
+  }, []);
 
-  // Saat aplikasi pertama kali dimuat: jika ada token tersimpan, validasikan
-  // ke backend (GET /auth/me). Jika token sudah expired/invalid, sesi
-  // dibersihkan otomatis dan user akan diarahkan ke /login oleh ProtectedRoute.
   useEffect(() => {
-    let isMounted = true
+    let active = true;
 
-    async function bootstrap() {
-      const existingToken = authService.getToken()
-      if (!existingToken) {
-        setIsInitializing(false)
-        return
+    async function restoreSession() {
+      const token = tokenStorage.get();
+
+      if (!token) {
+        if (active) setIsInitializing(false);
+        return;
       }
 
       try {
-        const profile = await authService.getProfile()
-        if (!isMounted) return
-        setUser(profile)
-        setToken(existingToken)
+        const currentUser = await authService.getCurrentUser();
+
+        if (!hasValidRole(currentUser)) {
+          throw new Error('Role pengguna tidak tersedia.');
+        }
+
+        if (active) setUser(currentUser);
       } catch {
-        if (isMounted) clearSession()
+        tokenStorage.remove();
+        if (active) setUser(null);
       } finally {
-        if (isMounted) setIsInitializing(false)
+        if (active) setIsInitializing(false);
       }
     }
 
-    bootstrap()
-
-    // Dipicu oleh services/api.js setiap kali ada response 401 dari
-    // endpoint manapun — menandakan token sudah tidak valid lagi.
-    function handleUnauthorized() {
-      clearSession()
-    }
-    window.addEventListener('auth:unauthorized', handleUnauthorized)
+    restoreSession();
 
     return () => {
-      isMounted = false
-      window.removeEventListener('auth:unauthorized', handleUnauthorized)
-    }
-  }, [clearSession])
+      active = false;
+    };
+  }, []);
 
-  const login = useCallback(async (email, password) => {
-    const { token: newToken, user: newUser } = await authService.login(email, password)
-    authService.setToken(newToken)
-    setToken(newToken)
-    setUser(newUser)
-    return newUser
-  }, [])
+  useEffect(() => {
+    window.addEventListener(AUTH_UNAUTHORIZED_EVENT, clearSession);
+    return () => window.removeEventListener(AUTH_UNAUTHORIZED_EVENT, clearSession);
+  }, [clearSession]);
+
+  const login = useCallback(async (credentials) => {
+    const result = await authService.login(credentials);
+
+    if (!result.token) {
+      throw new Error('Token login tidak ditemukan.');
+    }
+
+    tokenStorage.set(result.token);
+
+    try {
+      const verifiedUser = await authService.getCurrentUser();
+
+      if (!hasValidRole(verifiedUser)) {
+        throw new Error('Role pengguna tidak ditemukan.');
+      }
+
+      setUser(verifiedUser);
+      return verifiedUser;
+    } catch (error) {
+      tokenStorage.remove();
+      setUser(null);
+      throw error;
+    }
+  }, []);
 
   const logout = useCallback(() => {
-    clearSession()
-  }, [clearSession])
+    clearSession();
+  }, [clearSession]);
 
   const value = useMemo(
     () => ({
       user,
-      token,
-      isAuthenticated: Boolean(token && user),
+      isAuthenticated: Boolean(user && tokenStorage.get()),
       isInitializing,
       login,
       logout,
     }),
-    [user, token, isInitializing, login, logout],
-  )
+    [isInitializing, login, logout, user],
+  );
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
