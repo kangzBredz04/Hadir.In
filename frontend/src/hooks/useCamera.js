@@ -36,6 +36,12 @@ function getCameraErrorMessage(
                 'Kamera sedang digunakan aplikasi lain.'
             );
 
+        case 'OverconstrainedError':
+        case 'ConstraintNotSatisfiedError':
+            return (
+                'Kamera yang dipilih tidak tersedia pada perangkat ini.'
+            );
+
         default:
             return (
                 'Kamera tidak dapat digunakan. Silakan coba kembali.'
@@ -55,6 +61,16 @@ export default function useCamera() {
         setPermission
     ] =
         useState('prompt');
+
+    /*
+     * user        = kamera depan
+     * environment = kamera belakang
+     */
+    const [
+        facingMode,
+        setFacingMode
+    ] =
+        useState('user');
 
     const [
         preview,
@@ -98,7 +114,9 @@ export default function useCamera() {
 
                 if (
                     cameraError?.name ===
-                    'NotAllowedError'
+                    'NotAllowedError' ||
+                    cameraError?.name ===
+                    'PermissionDeniedError'
                 ) {
                     setPermission(
                         'denied'
@@ -185,9 +203,38 @@ export default function useCamera() {
             setError('');
         }, []);
 
+    const switchCamera =
+        useCallback(() => {
+            /*
+             * Hapus foto lama supaya setelah
+             * pindah kamera user kembali
+             * melihat live camera.
+             */
+            setPreview(null);
+            setPhotoFile(null);
+
+            /*
+             * Reset status karena stream
+             * webcam akan dibuat ulang.
+             */
+            setCameraReady(false);
+
+            setError('');
+
+            setFacingMode(
+                current =>
+                    current ===
+                        'user'
+                        ? 'environment'
+                        : 'user'
+            );
+        }, []);
+
     return {
         cameraReady,
         permission,
+
+        facingMode,
 
         preview,
         photoFile,
@@ -198,6 +245,7 @@ export default function useCamera() {
         capture,
         retake,
         clearCapture,
+        switchCamera,
 
         handleUserMedia,
         handleUserMediaError

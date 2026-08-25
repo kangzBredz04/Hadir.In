@@ -641,6 +641,16 @@ export default function EmployeeAttendance() {
                             camera.error
                         }
 
+                        /*
+                         * Kamera depan / belakang.
+                         *
+                         * user        = depan
+                         * environment = belakang
+                         */
+                        facingMode={
+                            camera.facingMode
+                        }
+
                         disabled={
                             submitting
                         }
@@ -651,6 +661,14 @@ export default function EmployeeAttendance() {
 
                         onRetake={
                             camera.retake
+                        }
+
+                        /*
+                         * Handler untuk tombol
+                         * switch kamera.
+                         */
+                        onSwitchCamera={
+                            camera.switchCamera
                         }
 
                         onUserMedia={

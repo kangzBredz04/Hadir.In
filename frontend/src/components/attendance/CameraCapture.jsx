@@ -7,15 +7,12 @@ import Webcam from 'react-webcam';
 import {
     Camera,
     CheckCircle2,
-    RefreshCw
+    RefreshCw,
+    SwitchCamera
 } from 'lucide-react';
 
 import Button from '../ui/Button';
 import Card from '../ui/Card';
-
-const videoConstraints = {
-    facingMode: 'user'
-};
 
 export default function CameraCapture({
     preview,
@@ -24,41 +21,63 @@ export default function CameraCapture({
     error,
     disabled = false,
 
+    facingMode = 'user',
+
     onCapture,
     onRetake,
+    onSwitchCamera,
+
     onUserMedia,
     onUserMediaError
 }) {
     const webcamRef =
         useRef(null);
 
+    const videoConstraints = {
+        width: {
+            ideal: 1280
+        },
+
+        height: {
+            ideal: 720
+        },
+
+        facingMode: {
+            ideal:
+                facingMode
+        }
+    };
+
+    const isFrontCamera =
+        facingMode === 'user';
+
     return (
         <Card>
             <div
                 className="
-          flex
-          items-center
-          justify-between
-          gap-3
-        "
+                    flex
+                    items-center
+                    justify-between
+                    gap-3
+                "
             >
                 <div>
                     <p
                         className="
-              text-sm
-              font-semibold
-              text-primary
-            "
+                            text-sm
+                            font-semibold
+                            text-primary
+                        "
                     >
                         Foto Absensi
                     </p>
 
                     <h3
                         className="
-              mt-1
-              font-bold
-              text-text
-            "
+                            mt-1
+                            font-bold
+                            text-text
+                        "
                     >
                         Ambil Selfie
                     </h3>
@@ -67,18 +86,19 @@ export default function CameraCapture({
                 {preview && (
                     <div
                         className="
-              flex
-              h-9
-              w-9
-              items-center
-              justify-center
-              rounded-full
-              bg-green-50
-              text-success
-            "
+                            flex
+                            h-9
+                            w-9
+                            items-center
+                            justify-center
+                            rounded-full
+                            bg-green-50
+                            text-success
+                        "
                     >
                         <CheckCircle2
                             size={19}
+                            aria-hidden="true"
                         />
                     </div>
                 )}
@@ -86,38 +106,51 @@ export default function CameraCapture({
 
             <div
                 className="
-          mt-5
-          overflow-hidden
-          rounded-2xl
-          bg-slate-950
-        "
+                    mt-5
+                    overflow-hidden
+                    rounded-2xl
+                    bg-slate-950
+                "
             >
                 <div
                     className="
-            relative
-            aspect-[3/4]
-            max-h-[520px]
-            w-full
-            sm:aspect-[4/3]
-          "
+                        relative
+                        aspect-[3/4]
+                        max-h-[520px]
+                        w-full
+                        sm:aspect-[4/3]
+                    "
                 >
                     {preview ? (
                         <img
                             src={preview}
                             alt="Preview selfie absensi"
                             className="
-                h-full
-                w-full
-                object-cover
-              "
+                                h-full
+                                w-full
+                                object-cover
+                            "
                         />
                     ) : (
                         <Webcam
+                            /*
+                             * Key membuat react-webcam
+                             * diinisialisasi ulang ketika
+                             * kamera diganti.
+                             */
+                            key={facingMode}
+
                             ref={webcamRef}
 
                             audio={false}
 
-                            mirrored
+                            /*
+                             * Kamera depan dibuat mirror,
+                             * kamera belakang tidak.
+                             */
+                            mirrored={
+                                isFrontCamera
+                            }
 
                             screenshotFormat="image/jpeg"
 
@@ -140,43 +173,119 @@ export default function CameraCapture({
                             }
 
                             className="
-                h-full
-                w-full
-                object-cover
-              "
+                                h-full
+                                w-full
+                                object-cover
+                            "
                         />
                     )}
+
+                    {/*
+                     * Tombol ganti kamera hanya muncul
+                     * saat masih dalam mode live camera.
+                     */}
+                    {!preview && (
+                        <button
+                            type="button"
+                            onClick={
+                                onSwitchCamera
+                            }
+                            disabled={
+                                disabled ||
+                                capturing
+                            }
+                            className="
+                                absolute
+                                right-3
+                                top-3
+                                z-20
+                                flex
+                                h-11
+                                w-11
+                                items-center
+                                justify-center
+                                rounded-full
+                                border
+                                border-white/20
+                                bg-black/50
+                                text-white
+                                shadow-lg
+                                backdrop-blur-sm
+                                transition
+                                hover:bg-black/70
+                                disabled:cursor-not-allowed
+                                disabled:opacity-50
+                            "
+                            aria-label="Ganti kamera"
+                            title="Ganti kamera"
+                        >
+                            <SwitchCamera
+                                size={21}
+                                aria-hidden="true"
+                            />
+                        </button>
+                    )}
+
+                    {/*
+                     * Label kamera aktif.
+                     */}
+                    {!preview &&
+                        cameraReady && (
+                            <div
+                                className="
+                                    pointer-events-none
+                                    absolute
+                                    bottom-3
+                                    left-3
+                                    z-10
+                                    rounded-full
+                                    bg-black/50
+                                    px-3
+                                    py-1.5
+                                    text-xs
+                                    font-medium
+                                    text-white
+                                    backdrop-blur-sm
+                                "
+                            >
+                                {isFrontCamera
+                                    ? 'Kamera Depan'
+                                    : 'Kamera Belakang'}
+                            </div>
+                        )}
 
                     {!preview &&
                         !cameraReady &&
                         !error && (
                             <div
                                 className="
-                  pointer-events-none
-                  absolute
-                  inset-0
-                  flex
-                  items-center
-                  justify-center
-                  bg-slate-950/50
-                "
+                                    pointer-events-none
+                                    absolute
+                                    inset-0
+                                    z-10
+                                    flex
+                                    items-center
+                                    justify-center
+                                    bg-slate-950/50
+                                "
                             >
                                 <div
                                     className="
-                    text-center
-                    text-white
-                  "
+                                        text-center
+                                        text-white
+                                    "
                                 >
                                     <Camera
                                         size={32}
                                         className="mx-auto"
+                                        aria-hidden="true"
                                     />
 
                                     <p
                                         className="
-                      mt-3
-                      text-sm
-                    "
+                                            mt-3
+                                            text-sm
+                                        "
                                     >
                                         Mengaktifkan kamera...
                                     </p>
@@ -189,21 +298,21 @@ export default function CameraCapture({
             {error && (
                 <div
                     className="
-            mt-4
-            rounded-xl
-            border
-            border-red-200
-            bg-red-50
-            px-4
-            py-3
-          "
+                        mt-4
+                        rounded-xl
+                        border
+                        border-red-200
+                        bg-red-50
+                        px-4
+                        py-3
+                    "
                     role="alert"
                 >
                     <p
                         className="
-              text-sm
-              text-danger
-            "
+                            text-sm
+                            text-danger
+                        "
                     >
                         {error}
                     </p>
@@ -212,12 +321,12 @@ export default function CameraCapture({
 
             <div
                 className="
-          mt-4
-          flex
-          flex-col
-          gap-3
-          sm:flex-row
-        "
+                    mt-4
+                    flex
+                    flex-col
+                    gap-3
+                    sm:flex-row
+                "
             >
                 {!preview ? (
                     <Button
@@ -237,6 +346,7 @@ export default function CameraCapture({
                     >
                         <Camera
                             size={18}
+                            aria-hidden="true"
                         />
 
                         {capturing
@@ -256,6 +366,7 @@ export default function CameraCapture({
                     >
                         <RefreshCw
                             size={18}
+                            aria-hidden="true"
                         />
 
                         Ambil Ulang
@@ -266,11 +377,11 @@ export default function CameraCapture({
             {preview && (
                 <p
                     className="
-            mt-3
-            text-center
-            text-xs
-            text-muted
-          "
+                        mt-3
+                        text-center
+                        text-xs
+                        text-muted
+                    "
                 >
                     Foto belum dikirim.
                     Pastikan foto sudah sesuai
