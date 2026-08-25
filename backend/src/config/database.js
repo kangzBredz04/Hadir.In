@@ -1,4 +1,15 @@
+import 'dotenv/config';
+
 import { Sequelize } from 'sequelize';
+
+import pg from 'pg';
+
+/*
+ * Import ini sengaja dipertahankan
+ * agar pg-hstore ikut terdeteksi
+ * oleh Vercel file tracing.
+ */
+import 'pg-hstore';
 
 const {
     DATABASE_URL,
@@ -20,27 +31,46 @@ const sequelize =
         {
             dialect: 'postgres',
 
+            /*
+             * PENTING UNTUK VERCEL
+             *
+             * Tanpa ini Sequelize akan mencoba
+             * me-load "pg" secara dinamis.
+             *
+             * Vercel kadang tidak memasukkan
+             * dynamic dependency tersebut ke
+             * Serverless Function bundle.
+             */
+            dialectModule: pg,
+
             logging:
                 isProduction
                     ? false
                     : console.log,
 
+            /*
+             * DATABASE_URL jangan menggunakan
+             * ?sslmode=require.
+             *
+             * SSL kita atur dari sini.
+             */
             dialectOptions: {
                 ssl: {
                     require: true,
 
                     /*
-                     * Dibutuhkan untuk kasus certificate
-                     * chain Supabase / SSL inspection.
-                     *
-                     * Jangan tambahkan sslmode=require
-                     * pada DATABASE_URL jika menggunakan
-                     * config ini.
+                     * Ini juga menyelesaikan
+                     * SELF_SIGNED_CERT_IN_CHAIN
+                     * yang kamu dapat sebelumnya.
                      */
                     rejectUnauthorized: false
                 }
             },
 
+            /*
+             * Pool kecil lebih cocok
+             * untuk serverless.
+             */
             pool: {
                 max:
                     isProduction
@@ -56,10 +86,13 @@ const sequelize =
 
             define: {
                 timestamps: true,
-
                 underscored: true
             }
         }
     );
+
+export {
+    sequelize
+};
 
 export default sequelize;
