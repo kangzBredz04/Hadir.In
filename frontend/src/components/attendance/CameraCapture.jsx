@@ -122,7 +122,7 @@ export default function CameraCapture({
                             screenshotFormat="image/jpeg"
 
                             screenshotQuality={
-                                0.9
+                                0.8
                             }
 
                             forceScreenshotSourceSize

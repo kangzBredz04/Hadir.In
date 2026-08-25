@@ -1,26 +1,51 @@
-import { Sequelize } from 'sequelize';
-import env from './env.js';
+import {
+    Sequelize
+} from 'sequelize';
 
-const sequelize = new Sequelize(env.databaseUrl, {
-    dialect: 'postgres',
+const isProduction =
+    process.env.NODE_ENV ===
+    'production';
 
-    logging: env.nodeEnv === 'development'
-        ? console.log
-        : false,
+const sequelize =
+    new Sequelize(
+        process.env.DATABASE_URL,
+        {
+            dialect:
+                'postgres',
 
-    define: {
-        underscored: true,
-        timestamps: true
-    },
+            logging:
+                isProduction
+                    ? false
+                    : console.log,
 
-    dialectOptions: env.nodeEnv === 'production'
-        ? {
-            ssl: {
-                require: true,
-                rejectUnauthorized: false
+            dialectOptions:
+                isProduction
+                    ? {
+                        ssl: {
+                            require: true,
+
+                            rejectUnauthorized:
+                                false
+                        }
+                    }
+                    : {},
+
+            pool: {
+                max:
+                    isProduction
+                        ? 2
+                        : 5,
+
+                min:
+                    0,
+
+                acquire:
+                    10000,
+
+                idle:
+                    10000
             }
         }
-        : {}
-});
+    );
 
 export default sequelize;

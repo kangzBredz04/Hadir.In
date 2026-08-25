@@ -7,7 +7,7 @@ import {
 } from '../utils/file.js';
 
 const MAX_FILE_SIZE =
-    5 * 1024 * 1024;
+    3.5 * 1024 * 1024
 
 const allowedMimeTypes = [
     'image/jpeg',
