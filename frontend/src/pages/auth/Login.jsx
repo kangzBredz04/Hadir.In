@@ -125,12 +125,21 @@ export default function Login() {
                     }
                 );
             } catch (requestError) {
-                setError(
-                    handleApiError(
-                        requestError,
-                        'Login gagal. Silakan coba kembali.'
-                    )
-                );
+                if (
+                    requestError?.status ===
+                    401
+                ) {
+                    setError(
+                        'Email atau password salah.'
+                    );
+                } else {
+                    setError(
+                        handleApiError(
+                            requestError,
+                            'Login gagal. Silakan coba kembali.'
+                        )
+                    );
+                }
             } finally {
                 setSubmitting(false);
             }

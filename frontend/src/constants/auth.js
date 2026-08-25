@@ -31,6 +31,30 @@ export const EMPLOYEE_ROUTES =
             '/employee/profile'
     });
 
+export const ADMIN_ROUTES =
+    Object.freeze({
+        ROOT:
+            '/admin',
+
+        DASHBOARD:
+            '/admin/dashboard',
+
+        EMPLOYEES:
+            '/admin/employees',
+
+        OFFICES:
+            '/admin/offices',
+
+        ATTENDANCE:
+            '/admin/attendance',
+
+        REPORTS:
+            '/admin/reports',
+
+        PROFILE:
+            '/admin/profile'
+    });
+
 export function getHomeRouteForRole(
     role
 ) {

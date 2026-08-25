@@ -93,3 +93,23 @@ img {
   outline: 3px solid rgba(0, 103, 177, 0.25);
   outline-offset: 2px;
 }
+
+.leaflet-container {
+  font-family:
+    "Poppins",
+    ui-sans-serif,
+    system-ui,
+    sans-serif;
+
+  background: #e8f3fb;
+}
+
+.leaflet-control-zoom a {
+  font-family:
+    "Poppins",
+    sans-serif;
+}
+
+.leaflet-control-attribution {
+  font-size: 10px;
+}

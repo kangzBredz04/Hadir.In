@@ -16,6 +16,7 @@ import {
 
 import App from './App';
 
+import 'leaflet/dist/leaflet.css';
 import './index.css';
 
 createRoot(

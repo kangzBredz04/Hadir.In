@@ -6,19 +6,27 @@ import {
 
 import Login from '../pages/auth/Login';
 
+import AdminLayout from '../layouts/AdminLayout';
+import EmployeeLayout from '../layouts/EmployeeLayout';
+
 import AdminDashboard from '../pages/admin/Dashboard';
+import AdminEmployees from '../pages/admin/Employees';
+import AdminOffices from '../pages/admin/Offices';
+import AdminAttendance from '../pages/admin/Attendance';
+import AdminAttendanceDetail from '../pages/admin/AttendanceDetail';
+import AdminReports from '../pages/admin/Reports';
+import AdminProfile from '../pages/admin/Profile';
 
 import EmployeeDashboard from '../pages/employee/Dashboard';
 import EmployeeAttendance from '../pages/employee/Attendance';
 import EmployeeHistory from '../pages/employee/History';
 import EmployeeProfile from '../pages/employee/Profile';
 
-import EmployeeLayout from '../layouts/EmployeeLayout';
-
 import ProtectedRoute from './ProtectedRoute';
 import RoleRoute from './RoleRoute';
 
 import {
+    ADMIN_ROUTES,
     AUTH_ROUTES,
     EMPLOYEE_ROUTES,
     ROLES
@@ -53,6 +61,7 @@ export default function AppRoutes() {
                     <ProtectedRoute />
                 }
             >
+                {/* EMPLOYEE */}
                 <Route
                     element={
                         <RoleRoute
@@ -110,6 +119,7 @@ export default function AppRoutes() {
                     </Route>
                 </Route>
 
+                {/* ADMIN */}
                 <Route
                     element={
                         <RoleRoute
@@ -121,12 +131,71 @@ export default function AppRoutes() {
                 >
                     <Route
                         path={
-                            AUTH_ROUTES.ADMIN_HOME
+                            ADMIN_ROUTES.ROOT
                         }
                         element={
-                            <AdminDashboard />
+                            <AdminLayout />
                         }
-                    />
+                    >
+                        <Route
+                            index
+                            element={
+                                <Navigate
+                                    to="dashboard"
+                                    replace
+                                />
+                            }
+                        />
+
+                        <Route
+                            path="dashboard"
+                            element={
+                                <AdminDashboard />
+                            }
+                        />
+
+                        <Route
+                            path="employees"
+                            element={
+                                <AdminEmployees />
+                            }
+                        />
+
+                        <Route
+                            path="offices"
+                            element={
+                                <AdminOffices />
+                            }
+                        />
+
+                        <Route
+                            path="attendance"
+                            element={
+                                <AdminAttendance />
+                            }
+                        />
+
+                        <Route
+                            path="attendance/:id"
+                            element={
+                                <AdminAttendanceDetail />
+                            }
+                        />
+
+                        <Route
+                            path="reports"
+                            element={
+                                <AdminReports />
+                            }
+                        />
+
+                        <Route
+                            path="profile"
+                            element={
+                                <AdminProfile />
+                            }
+                        />
+                    </Route>
                 </Route>
             </Route>
 

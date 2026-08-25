@@ -1,3 +1,6 @@
+const APP_TIMEZONE =
+    'Asia/Jakarta';
+
 export function formatDate(
     value,
     fallback = '-'
@@ -6,18 +9,33 @@ export function formatDate(
         return fallback;
     }
 
-    const date =
-        new Date(
-            `${value}T00:00:00`
-        );
+    const parts =
+        String(value)
+            .split('-')
+            .map(Number);
 
     if (
-        Number.isNaN(
-            date.getTime()
+        parts.length !== 3 ||
+        parts.some(
+            value =>
+                !Number.isFinite(value)
         )
     ) {
         return fallback;
     }
+
+    const [
+        year,
+        month,
+        day
+    ] = parts;
+
+    const date =
+        new Date(
+            year,
+            month - 1,
+            day
+        );
 
     return new Intl.DateTimeFormat(
         'id-ID',
@@ -42,18 +60,29 @@ export function formatShortDate(
         return fallback;
     }
 
-    const date =
-        new Date(
-            `${value}T00:00:00`
-        );
+    const parts =
+        String(value)
+            .split('-')
+            .map(Number);
 
     if (
-        Number.isNaN(
-            date.getTime()
-        )
+        parts.length !== 3
     ) {
         return fallback;
     }
+
+    const [
+        year,
+        month,
+        day
+    ] = parts;
+
+    const date =
+        new Date(
+            year,
+            month - 1,
+            day
+        );
 
     return new Intl.DateTimeFormat(
         'id-ID',
@@ -68,4 +97,42 @@ export function formatShortDate(
                 'long'
         }
     ).format(date);
+}
+
+export function getTodayDate() {
+    const parts =
+        new Intl.DateTimeFormat(
+            'en-US',
+            {
+                timeZone:
+                    APP_TIMEZONE,
+
+                year:
+                    'numeric',
+
+                month:
+                    '2-digit',
+
+                day:
+                    '2-digit'
+            }
+        ).formatToParts(
+            new Date()
+        );
+
+    const values =
+        Object.fromEntries(
+            parts.map(
+                part => [
+                    part.type,
+                    part.value
+                ]
+            )
+        );
+
+    return [
+        values.year,
+        values.month,
+        values.day
+    ].join('-');
 }
