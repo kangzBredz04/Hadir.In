@@ -31,19 +31,23 @@ import App from './App';
 import 'leaflet/dist/leaflet.css';
 import './index.css';
 
+import PWAInstallProvider from './contexts/PWAInstallContext';
+
 createRoot(
   document.getElementById(
     'root'
   )
 ).render(
   <StrictMode>
-    <BrowserRouter>
-      <ToastProvider>
+    <PWAInstallProvider>
+      <BrowserRouter>
         <AuthProvider>
-          <App />
+          <ToastProvider>
+            <App />
+          </ToastProvider>
         </AuthProvider>
-      </ToastProvider>
-    </BrowserRouter>
+      </BrowserRouter>
+    </PWAInstallProvider>
 
     <Analytics />
     <SpeedInsights />

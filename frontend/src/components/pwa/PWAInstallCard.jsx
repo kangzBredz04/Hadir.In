@@ -14,6 +14,7 @@ export default function PWAInstallCard() {
         installable,
         installed,
         isIOS,
+        isAndroid,
         install
     } =
         usePWAInstall();
@@ -37,7 +38,8 @@ export default function PWAInstallCard() {
      */
     if (
         !installable &&
-        !isIOS
+        !isIOS &&
+        !isAndroid
     ) {
         return null;
     }
@@ -108,33 +110,62 @@ export default function PWAInstallCard() {
                         >
                             Tambahkan Hadir.In
                             ke layar utama untuk
-                            akses absensi yang
+                            akses aplikasi yang
                             lebih cepat.
                         </p>
                     </div>
                 </div>
 
-                {!isIOS &&
-                    installable && (
-                        <Button
-                            type="button"
-                            className="
-                                w-full
-                                shrink-0
-                                sm:w-auto
-                            "
-                            onClick={
-                                install
-                            }
-                        >
-                            <Download
-                                size={18}
-                                aria-hidden="true"
-                            />
+                {installable ? (
+                    <Button
+                        type="button"
+                        className="
+            w-full
+            shrink-0
+            sm:w-auto
+        "
+                        onClick={
+                            install
+                        }
+                    >
+                        <Download
+                            size={18}
+                            aria-hidden="true"
+                        />
 
-                            Install Aplikasi
-                        </Button>
-                    )}
+                        Install Aplikasi
+                    </Button>
+                ) : isAndroid ? (
+                    <div
+                        className="
+            w-full
+            rounded-xl
+            border
+            border-primary/10
+            bg-white/70
+            px-4
+            py-3
+            text-sm
+            leading-6
+            text-muted
+            sm:max-w-sm
+        "
+                    >
+                        Buka menu browser
+                        <strong>
+                            {' '}⋮
+                        </strong>
+                        {' '}lalu pilih
+                        <strong>
+                            {' '}Install aplikasi
+                        </strong>
+                        {' '}atau
+                        <strong>
+                            {' '}Tambahkan ke layar utama
+                        </strong>
+                        .
+                    </div>
+                ) : null}
             </div>
 
             {isIOS && (
