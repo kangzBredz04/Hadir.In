@@ -24,6 +24,8 @@ import {
 } from '../../components/ui/Skeleton';
 import Spinner from '../../components/ui/Spinner';
 
+import PWAInstallCard from '../../components/pwa/PWAInstallCard';
+
 import {
     ADMIN_ROUTES
 } from '../../constants/auth';
@@ -320,6 +322,12 @@ export default function AdminDashboard() {
                     )}
                 </p>
             </section>
+
+            {/* =========================
+            PWA INSTALL
+        ========================= */}
+
+            <PWAInstallCard />
 
             {error && (
                 <Card

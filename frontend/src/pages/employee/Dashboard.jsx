@@ -18,6 +18,8 @@ import Button from '../../components/ui/Button';
 import Card from '../../components/ui/Card';
 import Spinner from '../../components/ui/Spinner';
 
+import PWAInstallCard from '../../components/pwa/PWAInstallCard';
+
 import {
     EMPLOYEE_ROUTES
 } from '../../constants/auth';
@@ -148,6 +150,12 @@ export default function EmployeeDashboard() {
                     </Button>
                 </Link>
             </section>
+
+            {/* =========================
+            PWA INSTALL
+        ========================= */}
+
+            <PWAInstallCard />
 
             {error && (
                 <Card
