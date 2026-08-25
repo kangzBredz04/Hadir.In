@@ -13,6 +13,10 @@ import {
     errorHandler
 } from './middlewares/error.middleware.js';
 
+import {
+    requestLogger
+} from './middlewares/request-logger.middleware.js';
+
 const app = express();
 
 /*
@@ -38,6 +42,10 @@ app.use(
     express.json({
         limit: '1mb'
     })
+);
+
+app.use(
+    requestLogger
 );
 
 app.use(
