@@ -2,10 +2,19 @@ import {
     Inbox
 } from 'lucide-react';
 
+import Button from './Button';
+
 export default function EmptyState({
     icon: Icon = Inbox,
-    title = 'Belum ada data.',
-    description
+
+    title =
+    'Belum ada data.',
+
+    description,
+
+    actionLabel,
+
+    onAction
 }) {
     return (
         <div
@@ -61,6 +70,16 @@ export default function EmptyState({
                     {description}
                 </p>
             )}
+
+            {actionLabel &&
+                onAction && (
+                    <Button
+                        className="mt-5"
+                        onClick={onAction}
+                    >
+                        {actionLabel}
+                    </Button>
+                )}
         </div>
     );
 }

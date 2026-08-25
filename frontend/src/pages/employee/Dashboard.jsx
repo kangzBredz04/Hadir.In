@@ -94,29 +94,30 @@ export default function EmployeeDashboard() {
 
                     <h2
                         className="
-              mt-1
-              text-2xl
-              font-bold
-              tracking-tight
-              text-text
-              sm:text-3xl
-            "
+    mt-1
+    text-[28px]
+    font-bold
+    leading-tight
+    tracking-tight
+    text-text
+    sm:text-3xl
+  "
                     >
                         {user?.name} 👋
                     </h2>
 
                     <div
                         className="
-              mt-2
-              flex
-              items-center
-              gap-2
-              text-sm
-              text-muted
-            "
+    mt-3
+    flex
+    items-center
+    gap-2
+    text-sm
+    text-muted
+  "
                     >
                         <CalendarDays
-                            size={16}
+                            size={17}
                             aria-hidden="true"
                         />
 
@@ -214,84 +215,135 @@ export default function EmployeeDashboard() {
                         >
                             <div
                                 className="
-                  absolute
-                  -right-16
-                  -top-16
-                  h-40
-                  w-40
-                  rounded-full
-                  bg-primary/30
-                  blur-2xl
-                "
-                            />
-
-                            <div
-                                className="
-                  relative
-                  z-10
-                "
+    relative
+    overflow-hidden
+    rounded-2xl
+    bg-primary-dark
+    p-5
+    text-white
+    shadow-sm
+    sm:p-6
+  "
                             >
+                                {/* Decorative background */}
                                 <div
                                     className="
-                    flex
-                    items-start
-                    justify-between
-                    gap-4
-                  "
-                                >
-                                    <div>
-                                        <p
-                                            className="
-                        text-xs
-                        font-medium
-                        text-blue-200
-                      "
-                                        >
-                                            Status Absensi
-                                        </p>
+      pointer-events-none
+      absolute
+      -right-16
+      -top-20
+      h-48
+      w-48
+      rounded-full
+      bg-primary/40
+      blur-3xl
+    "
+                                />
 
-                                        <h3
+                                <div
+                                    className="
+      pointer-events-none
+      absolute
+      -bottom-24
+      -left-20
+      h-44
+      w-44
+      rounded-full
+      bg-blue-400/10
+      blur-3xl
+    "
+                                />
+
+                                <div
+                                    className="
+      relative
+      z-10
+    "
+                                >
+                                    <div
+                                        className="
+        flex
+        items-start
+        justify-between
+        gap-4
+      "
+                                    >
+                                        <div>
+                                            <p
+                                                className="
+            text-sm
+            font-medium
+            text-blue-200
+          "
+                                            >
+                                                Status Absensi
+                                            </p>
+
+                                            <h3
+                                                className="
+            mt-1
+            text-xl
+            font-bold
+            text-white
+          "
+                                            >
+                                                Hari Ini
+                                            </h3>
+                                        </div>
+
+                                        <div
                                             className="
-                        mt-2
-                        text-xl
-                        font-semibold
-                      "
+          flex
+          h-11
+          w-11
+          shrink-0
+          items-center
+          justify-center
+          rounded-full
+          bg-white/10
+          ring-1
+          ring-white/20
+        "
                                         >
-                                            Hari Ini
-                                        </h3>
+                                            <CheckCircle2
+                                                size={22}
+                                                className="text-white"
+                                                aria-hidden="true"
+                                            />
+                                        </div>
                                     </div>
 
-                                    <CheckCircle2
-                                        size={28}
+                                    <div className="mt-7">
+                                        <AttendanceStatus
+                                            status={
+                                                attendance?.status
+                                            }
+                                        />
+                                    </div>
+
+                                    <div
                                         className="
-                      text-blue-200
-                    "
-                                    />
+        mt-6
+        border-t
+        border-white/10
+        pt-5
+      "
+                                    >
+                                        <p
+                                            className="
+          text-sm
+          leading-6
+          text-blue-100
+        "
+                                        >
+                                            {!attendance
+                                                ? 'Anda belum melakukan absensi hari ini.'
+                                                : !hasCheckedOut
+                                                    ? 'Check-in sudah tercatat. Jangan lupa melakukan check-out.'
+                                                    : 'Absensi hari ini sudah lengkap.'}
+                                        </p>
+                                    </div>
                                 </div>
-
-                                <div className="mt-6">
-                                    <AttendanceStatus
-                                        status={
-                                            attendance
-                                                ?.status
-                                        }
-                                    />
-                                </div>
-
-                                <p
-                                    className="
-                    mt-5
-                    text-sm
-                    leading-6
-                    text-blue-100
-                  "
-                                >
-                                    {!attendance
-                                        ? 'Anda belum melakukan absensi hari ini.'
-                                        : !hasCheckedOut
-                                            ? 'Check-in sudah tercatat. Jangan lupa melakukan check-out.'
-                                            : 'Absensi hari ini sudah lengkap.'}
-                                </p>
                             </div>
                         </Card>
 

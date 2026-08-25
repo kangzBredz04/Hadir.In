@@ -31,6 +31,8 @@ import Pagination from '../../components/ui/Pagination';
 import Select from '../../components/ui/Select';
 import Spinner from '../../components/ui/Spinner';
 
+import useToast from '../../hooks/useToast';
+
 import {
     createAdminUser,
     deactivateAdminUser,
@@ -92,6 +94,9 @@ export default function AdminEmployees() {
         setPage
     ] =
         useState(1);
+
+    const toast =
+        useToast();
 
     const [
         items,
@@ -241,11 +246,9 @@ export default function AdminEmployees() {
                 payload
             );
 
-            setCreateOpen(
-                false
-            );
+            setCreateOpen(false);
 
-            setSuccess(
+            toast.success(
                 'Employee berhasil ditambahkan.'
             );
 
@@ -261,11 +264,9 @@ export default function AdminEmployees() {
                 payload
             );
 
-            setEditEmployee(
-                null
-            );
+            setEditEmployee(null);
 
-            setSuccess(
+            toast.success(
                 'Employee berhasil diperbarui.'
             );
 
@@ -274,15 +275,11 @@ export default function AdminEmployees() {
 
     const handleDeactivate =
         async () => {
-            if (
-                !deactivateEmployee
-            ) {
+            if (!deactivateEmployee) {
                 return;
             }
 
-            setDeactivating(
-                true
-            );
+            setDeactivating(true);
 
             try {
                 await deactivateAdminUser(
@@ -293,24 +290,21 @@ export default function AdminEmployees() {
                     null
                 );
 
-                setSuccess(
+                toast.success(
                     'Employee berhasil dinonaktifkan.'
                 );
 
                 await loadEmployees();
-            } catch (
-            requestError
-            ) {
-                setError(
+            } catch (requestError) {
+                const message =
                     handleApiError(
                         requestError,
                         'Employee gagal dinonaktifkan.'
-                    )
-                );
+                    );
+
+                toast.error(message);
             } finally {
-                setDeactivating(
-                    false
-                );
+                setDeactivating(false);
             }
         };
 

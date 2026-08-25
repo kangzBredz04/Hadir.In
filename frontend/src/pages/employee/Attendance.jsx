@@ -23,6 +23,7 @@ import useAttendance from '../../hooks/useAttendance';
 import useAuth from '../../hooks/useAuth';
 import useCamera from '../../hooks/useCamera';
 import useGeolocation from '../../hooks/useGeolocation';
+import useToast from '../../hooks/useToast';
 
 import {
     checkInAttendance,
@@ -59,6 +60,9 @@ export default function EmployeeAttendance() {
 
     const location =
         useGeolocation();
+
+    const toast =
+        useToast();
 
     const [
         submitting,
@@ -201,6 +205,21 @@ export default function EmployeeAttendance() {
                             location.longitude
                     });
 
+                if (
+                    attendanceMode ===
+                    'CHECK_IN'
+                ) {
+                    toast.success(
+                        'Check-in Anda berhasil dicatat.',
+                        'Check-in berhasil'
+                    );
+                } else {
+                    toast.success(
+                        'Check-out Anda berhasil dicatat.',
+                        'Check-out berhasil'
+                    );
+                }
+
                 setActionSuccess({
                     type:
                         attendanceMode,
@@ -224,14 +243,22 @@ export default function EmployeeAttendance() {
                     // menyimpan error refresh.
                 }
             } catch (requestError) {
-                setActionError(
+                const message =
                     handleApiError(
                         requestError,
+
                         attendanceMode ===
                             'CHECK_IN'
                             ? 'Check-in gagal.'
                             : 'Check-out gagal.'
-                    )
+                    );
+
+                setActionError(
+                    message
+                );
+
+                toast.error(
+                    message
                 );
 
                 setBackendLocationError(

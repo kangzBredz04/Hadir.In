@@ -3,7 +3,7 @@ const DEFAULT_MESSAGE =
 
 const statusMessages = {
     400:
-        'Data yang dikirim belum sesuai.',
+        'Data yang dikirim belum sesuai. Periksa kembali data Anda.',
 
     401:
         'Sesi Anda tidak valid. Silakan login kembali.',
@@ -15,10 +15,13 @@ const statusMessages = {
         'Data yang diminta tidak ditemukan.',
 
     409:
-        'Permintaan tidak dapat diproses karena status data saat ini.',
+        'Permintaan tidak dapat diproses karena kondisi data saat ini.',
+
+    413:
+        'Ukuran file terlalu besar.',
 
     422:
-        'Data yang dikirim belum valid.',
+        'Data yang dimasukkan belum valid.',
 
     429:
         'Terlalu banyak permintaan. Silakan tunggu beberapa saat.',
@@ -27,9 +30,11 @@ const statusMessages = {
         'Server sedang mengalami kendala. Silakan coba lagi.'
 };
 
-const safeBusinessStatuses =
+const safeBackendMessageStatuses =
     new Set([
+        400,
         409,
+        413,
         422
     ]);
 
@@ -49,31 +54,37 @@ export function handleApiError(
 
     if (
         error?.message ===
-        'Foto absensi belum tersedia.' ||
-        error?.message ===
-        'Lokasi absensi belum tersedia.'
+        'Konfigurasi VITE_API_URL belum tersedia.'
+    ) {
+        return (
+            'Konfigurasi aplikasi belum lengkap.'
+        );
+    }
+
+    if (
+        [
+            'Foto absensi belum tersedia.',
+            'Lokasi absensi belum tersedia.'
+        ].includes(
+            error?.message
+        )
     ) {
         return error.message;
     }
 
-    /*
-     * Pesan business validation
-     * dari backend aman ditampilkan.
-     *
-     * Contoh:
-     * - sudah check-in
-     * - sudah check-out
-     * - di luar radius
-     */
     if (
-        safeBusinessStatuses.has(
+        safeBackendMessageStatuses.has(
             error?.status
         ) &&
-        typeof error?.payload
+        typeof error
+            ?.payload
             ?.message ===
-        'string'
+        'string' &&
+        error.payload.message.trim()
     ) {
-        return error.payload.message;
+        return error
+            .payload
+            .message;
     }
 
     return (
@@ -92,9 +103,7 @@ export function getLocationApiError(
             ?.errors;
 
     if (
-        !Array.isArray(
-            errors
-        )
+        !Array.isArray(errors)
     ) {
         return null;
     }
@@ -141,4 +150,34 @@ export function getLocationApiError(
                 ? allowedRadius
                 : null
     };
+}
+
+export function getValidationErrors(
+    error
+) {
+    const errors =
+        error?.payload
+            ?.errors;
+
+    if (
+        !Array.isArray(errors)
+    ) {
+        return [];
+    }
+
+    return errors
+        .map(item => ({
+            field:
+                item?.field ??
+                null,
+
+            message:
+                item?.message ??
+                item?.msg ??
+                null
+        }))
+        .filter(
+            item =>
+                item.message
+        );
 }

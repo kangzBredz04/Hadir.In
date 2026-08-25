@@ -17,6 +17,11 @@ import {
 import AttendanceStatus from '../../components/attendance/AttendanceStatus';
 
 import Card from '../../components/ui/Card';
+import {
+    Skeleton,
+    CardSkeleton,
+    TableSkeleton
+} from '../../components/ui/Skeleton';
 import Spinner from '../../components/ui/Spinner';
 
 import {
@@ -232,20 +237,50 @@ export default function AdminDashboard() {
 
     if (loading) {
         return (
-            <Card>
-                <div
-                    className="
-            flex
-            min-h-72
-            items-center
-            justify-center
+            <div className="space-y-6">
+                <div>
+                    <Skeleton
+                        className="
+            h-4
+            w-24
           "
-                >
-                    <Spinner
-                        label="Memuat dashboard..."
+                    />
+
+                    <Skeleton
+                        className="
+            mt-3
+            h-8
+            w-64
+          "
                     />
                 </div>
-            </Card>
+
+                <div
+                    className="
+          grid
+          gap-4
+          sm:grid-cols-2
+          xl:grid-cols-4
+        "
+                >
+                    <CardSkeleton />
+                    <CardSkeleton />
+                    <CardSkeleton />
+                    <CardSkeleton />
+                </div>
+
+                <Card
+                    className="
+          overflow-hidden
+          p-0
+        "
+                >
+                    <TableSkeleton
+                        rows={5}
+                        columns={5}
+                    />
+                </Card>
+            </div>
         );
     }
 

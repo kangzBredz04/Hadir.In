@@ -14,6 +14,10 @@ import {
   AuthProvider
 } from './contexts/AuthContext';
 
+import {
+  ToastProvider
+} from './contexts/ToastContext';
+
 import App from './App';
 
 import 'leaflet/dist/leaflet.css';
@@ -26,9 +30,11 @@ createRoot(
 ).render(
   <StrictMode>
     <BrowserRouter>
-      <AuthProvider>
-        <App />
-      </AuthProvider>
+      <ToastProvider>
+        <AuthProvider>
+          <App />
+        </AuthProvider>
+      </ToastProvider>
     </BrowserRouter>
   </StrictMode>
 );

@@ -8,9 +8,7 @@ const variants = {
     success: {
         className:
             'bg-green-50 text-success border-green-200',
-
-        Icon:
-            CheckCircle2
+        Icon: CheckCircle2
     },
 
     warning: {

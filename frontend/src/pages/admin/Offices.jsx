@@ -27,6 +27,8 @@ import Pagination from '../../components/ui/Pagination';
 import Select from '../../components/ui/Select';
 import Spinner from '../../components/ui/Spinner';
 
+import useToast from '../../hooks/useToast';
+
 import {
     createAdminOffice,
     deactivateAdminOffice,
@@ -62,6 +64,9 @@ export default function AdminOffices() {
         setPage
     ] =
         useState(1);
+
+    const toast =
+        useToast();
 
     const [
         items,
@@ -183,11 +188,9 @@ export default function AdminOffices() {
                 payload
             );
 
-            setCreateOpen(
-                false
-            );
+            setCreateOpen(false);
 
-            setSuccess(
+            toast.success(
                 'Kantor berhasil ditambahkan.'
             );
 
@@ -205,7 +208,7 @@ export default function AdminOffices() {
 
             setEditOffice(null);
 
-            setSuccess(
+            toast.success(
                 'Kantor berhasil diperbarui.'
             );
 
@@ -225,19 +228,15 @@ export default function AdminOffices() {
                     deactivateOffice.id
                 );
 
-                setDeactivateOffice(
-                    null
-                );
+                setDeactivateOffice(null);
 
-                setSuccess(
+                toast.success(
                     'Kantor berhasil dinonaktifkan.'
                 );
 
                 await loadOffices();
-            } catch (
-            requestError
-            ) {
-                setError(
+            } catch (requestError) {
+                toast.error(
                     handleApiError(
                         requestError,
                         'Kantor gagal dinonaktifkan.'

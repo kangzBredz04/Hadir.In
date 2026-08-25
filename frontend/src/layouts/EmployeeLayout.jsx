@@ -551,20 +551,20 @@ export default function EmployeeLayout() {
 
             <nav
                 className="
-          fixed
-          inset-x-0
-          bottom-0
-          z-30
-          flex
-          min-h-16
-          border-t
-          border-border
-          bg-surface
-          px-2
-          shadow-[0_-4px_20px_rgba(15,23,42,0.06)]
-          lg:hidden
-        "
-                aria-label="Navigasi employee"
+    fixed
+    inset-x-0
+    bottom-0
+    z-30
+    flex
+    min-h-16
+    border-t
+    border-border
+    bg-surface
+    px-2
+    pb-[env(safe-area-inset-bottom)]
+    shadow-[0_-4px_20px_rgba(15,23,42,0.06)]
+    lg:hidden
+  "
             >
                 {navigation.map(
                     item => (

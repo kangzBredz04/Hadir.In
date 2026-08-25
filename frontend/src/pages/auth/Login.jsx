@@ -20,6 +20,7 @@ import {
 import Button from '../../components/ui/Button';
 
 import useAuth from '../../hooks/useAuth';
+import useToast from '../../hooks/useToast';
 
 import {
     getHomeRouteForRole
@@ -65,6 +66,9 @@ export default function Login() {
     ] =
         useState(false);
 
+    const toast =
+        useToast();
+
     const [
         error,
         setError
@@ -85,6 +89,7 @@ export default function Login() {
             />
         );
     }
+
 
     const handleSubmit =
         async event => {
@@ -115,6 +120,11 @@ export default function Login() {
 
                         password
                     });
+
+                toast.success(
+                    `Selamat datang, ${loggedInUser.name}.`,
+                    'Login berhasil'
+                );
 
                 navigate(
                     getHomeRouteForRole(

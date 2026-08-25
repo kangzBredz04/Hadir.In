@@ -1,10 +1,21 @@
 import {
-    useEffect
+    useEffect,
+    useId,
+    useRef
 } from 'react';
 
 import {
     X
 } from 'lucide-react';
+
+const FOCUSABLE_SELECTOR = [
+    'a[href]',
+    'button:not([disabled])',
+    'input:not([disabled])',
+    'select:not([disabled])',
+    'textarea:not([disabled])',
+    '[tabindex]:not([tabindex="-1"])'
+].join(',');
 
 export default function Modal({
     open,
@@ -13,25 +24,27 @@ export default function Modal({
     onClose,
     maxWidth = 'max-w-3xl'
 }) {
+    const panelRef =
+        useRef(null);
+
+    const onCloseRef =
+        useRef(onClose);
+
+    const titleId =
+        useId();
+
+    useEffect(() => {
+        onCloseRef.current =
+            onClose;
+    }, [onClose]);
+
     useEffect(() => {
         if (!open) {
             return;
         }
 
-        const handleKeyDown =
-            event => {
-                if (
-                    event.key ===
-                    'Escape'
-                ) {
-                    onClose();
-                }
-            };
-
-        document.addEventListener(
-            'keydown',
-            handleKeyDown
-        );
+        const previousFocusedElement =
+            document.activeElement;
 
         const previousOverflow =
             document.body.style
@@ -40,6 +53,96 @@ export default function Modal({
         document.body.style
             .overflow =
             'hidden';
+
+        const panel =
+            panelRef.current;
+
+        const getFocusable =
+            () =>
+                Array.from(
+                    panel?.querySelectorAll(
+                        FOCUSABLE_SELECTOR
+                    ) ?? []
+                );
+
+        const focusable =
+            getFocusable();
+
+        if (
+            focusable.length > 0
+        ) {
+            focusable[0].focus();
+        } else {
+            panel?.focus();
+        }
+
+        const handleKeyDown =
+            event => {
+                if (
+                    event.key ===
+                    'Escape'
+                ) {
+                    onCloseRef
+                        .current?.();
+
+                    return;
+                }
+
+                if (
+                    event.key !==
+                    'Tab'
+                ) {
+                    return;
+                }
+
+                const elements =
+                    getFocusable();
+
+                if (
+                    elements.length === 0
+                ) {
+                    event.preventDefault();
+
+                    panel?.focus();
+
+                    return;
+                }
+
+                const first =
+                    elements[0];
+
+                const last =
+                    elements[
+                    elements.length - 1
+                    ];
+
+                if (
+                    event.shiftKey &&
+                    document.activeElement ===
+                    first
+                ) {
+                    event.preventDefault();
+
+                    last.focus();
+
+                    return;
+                }
+
+                if (
+                    !event.shiftKey &&
+                    document.activeElement ===
+                    last
+                ) {
+                    event.preventDefault();
+
+                    first.focus();
+                }
+            };
+
+        document.addEventListener(
+            'keydown',
+            handleKeyDown
+        );
 
         return () => {
             document.removeEventListener(
@@ -50,11 +153,16 @@ export default function Modal({
             document.body.style
                 .overflow =
                 previousOverflow;
+
+            if (
+                previousFocusedElement
+                instanceof HTMLElement
+            ) {
+                previousFocusedElement
+                    .focus();
+            }
         };
-    }, [
-        open,
-        onClose
-    ]);
+    }, [open]);
 
     if (!open) {
         return null;
@@ -75,21 +183,27 @@ export default function Modal({
         sm:items-center
         sm:p-4
       "
-            role="dialog"
-            aria-modal="true"
-            aria-label={title}
+            role="presentation"
             onMouseDown={
                 event => {
                     if (
                         event.target ===
                         event.currentTarget
                     ) {
-                        onClose();
+                        onCloseRef
+                            .current?.();
                     }
                 }
             }
         >
             <div
+                ref={panelRef}
+                tabIndex={-1}
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby={
+                    titleId
+                }
                 className={`
           flex
           max-h-[92vh]
@@ -98,6 +212,7 @@ export default function Modal({
           rounded-t-3xl
           bg-surface
           shadow-xl
+          outline-none
           sm:rounded-3xl
           ${maxWidth}
         `}
@@ -115,6 +230,7 @@ export default function Modal({
           "
                 >
                     <h2
+                        id={titleId}
                         className="
               font-bold
               text-text
@@ -125,11 +241,14 @@ export default function Modal({
 
                     <button
                         type="button"
-                        onClick={onClose}
+                        onClick={() =>
+                            onCloseRef
+                                .current?.()
+                        }
                         className="
               flex
-              h-9
-              w-9
+              h-10
+              w-10
               items-center
               justify-center
               rounded-xl
@@ -137,12 +256,12 @@ export default function Modal({
               transition
               hover:bg-background
               hover:text-text
+              focus-visible:ring-2
+              focus-visible:ring-primary
             "
-                        aria-label="Tutup"
+                        aria-label="Tutup dialog"
                     >
-                        <X
-                            size={20}
-                        />
+                        <X size={20} />
                     </button>
                 </div>
 
